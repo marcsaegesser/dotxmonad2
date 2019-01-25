@@ -37,6 +37,7 @@ import XMonad.Util.SpawnOnce
 import XMonad.Actions.Warp
 import XMonad.Actions.Volume
 import XMonad.Actions.CopyWindow
+import XMonad.Actions.DynamicProjects
 
 import qualified XMonad.StackSet as W
 
@@ -59,7 +60,7 @@ mprisCommand cmd = catchIO $ do
 main :: IO ()
 main = do
   myStatusBarPipe <- spawnPipe "xmobar"
-  xmonad $ docks $ withUrgencyHook NoUrgencyHook $ def
+  xmonad $ docks $ withUrgencyHook NoUrgencyHook $ dynamicProjects projects $ def
     { terminal          = "urxvt"
     , workspaces        = myWorkspaces
     , modMask           = mod4Mask
@@ -215,6 +216,23 @@ myScratchpads = [
 myWorkspaces :: [String]
 myWorkspaces = [ "web", "emacs", "chat", "vm", "office", "media", "xterms", "8", "9", "0"]
 
+projects :: [Project]
+projects =
+  [ Project { projectName      = "terms"
+            , projectDirectory = "~/"
+            , projectStartHook = Just $ do spawn "urxvt"
+                                           spawn "urxvt"
+                                           spawn "urxvt"
+            }
+
+  , Project { projectName      = "browser"
+            , projectDirectory = "~/download"
+            , projectStartHook = Just $ do spawn "conkeror"
+                                           spawn "chromium"
+            }
+  ]
+
+
 myKeys :: XConfig Layout -> Map (KeyMask, KeySym) (X ())
 myKeys conf@(XConfig {XMonad.modMask = modm}) = fromList $
   [ ((modm                , xK_a          ), sendMessage MirrorShrink)
@@ -224,6 +242,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = fromList $
   , ((modm                , xK_o          ), namedScratchpadAction myScratchpads "htop")
   , ((modm                , xK_c          ), namedScratchpadAction myScratchpads "calculator")
   , ((modm                , xK_s          ), namedScratchpadAction myScratchpads "spotify")
+  -- , ((modm                , xK_slash      ), switchProjectPrompt)
+  -- , ((modm                , xK_question   ), shiftToProjectPrompt)
   , ((modm                , xK_p          ), shellPrompt myXPConfig)
   , ((modm                , xK_F2         ), scratchpadSpawnAction conf)
   , ((modm                , xK_F10        ), spawn "bin/stop-compton.sh")  -- Stop compton (doesn't get as confused as xcompmgr but sometimes still necessary)
