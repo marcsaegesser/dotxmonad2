@@ -1,0 +1,21 @@
+Config  {
+        -- font = "-*-terminus-bold-r-*-*-12-*-*-*-*-*-*-*"
+        font = "xft:Iosevka Type:size=9:bold:antialias=true"
+        , bgColor = "black"
+        , fgColor = "grey"
+        , position = BottomSize L 93 16
+        , lowerOnStart = True
+        , commands =    [ Run Memory ["-t","Mem: <usedratio>%"] 10
+			, Run Weather "KORD" ["-t"," ORD:<tempF>/<dewPointF>°F <windCardinal>@<windMph>","-L","50","-H","80","--normal","green","--high","red","--low","lightblue"] 36000
+--			, Run Network "eno1" [] 10
+                        , Run DynNetwork [] 10
+                        , Run Cpu ["-t", "CPU: <vbar>"] 10
+                        , Run Date "%a %B %d %I:%M %p" "dt" 60
+                        , Run StdinReader
+                        , Run CoreTemp ["--template", "CoreTemp: <core0>|<core1>|<core2>|°C", "--Low", "25", "--High", "70", "--low", "darkgreen", "--normal", "darkorange", "--high", "darkred"] 50
+--                        , Run Mpris2 "spotify" ["-t", "<artist> - [<composer>] <title>"] 10
+                        ]
+        , sepChar = "%"
+        , alignSep = "}{"
+        , template = "%StdinReader% }{ <fc=#CCCC00>%dynnetwork%</fc> %cpu% %memory% %coretemp% %KORD% <fc=#57E9FF>%dt%</fc>"
+        }

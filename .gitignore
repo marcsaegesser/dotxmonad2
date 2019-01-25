@@ -1,0 +1,9 @@
+xmonad
+xmonad-contrib
+xmonad-extras
+xmobar
+*.errors
+*.hi
+.stack-work
+*x86*
+prompt-history
