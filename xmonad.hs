@@ -90,8 +90,6 @@ myManageHook = composeOne
   , className =? "Emacs"            -?> doShift "emacs"
   , className =? "HipChat"          -?> doShift "chat"
   , className =? "Skype"            -?> doShift "chat"
-  , className =? "Spotify"          -?> doShift "media"  -- I give up. Spotify just won't shift
-  , appName   =? "spotify"          -?> doShift "media"  -- I give up. Spotify just won't shift
   , appName   =? "libreoffice"      -?> doShift "office"
   , appName   =? "gnome-calculator" -?> doFloat
   -- , appName   =* decodeWSName   --?> shiftAndDown
@@ -101,7 +99,8 @@ myManageHook = composeOne
 myScratchpads :: [NamedScratchpad]
 myScratchpads = [
       NS "htop" spawnHtop findHtop (customFloating $ W.RationalRect (1/4) (1/6) (1/2) (2/3))
-    , NS "nautilus" spawnNautilus findNautilus (rightPanel 0.67)
+    , NS "nautilus" spawnNautilus findNautilus (rightPanel 0.40)
+    , NS "spotify" spawnSpotify findSpotify (leftPanel 0.67)
     , NS "calculator" spawnCalculator findCalculator defaultFloating
     -- , NS "nautilus" spawnNautilus findNautilus (customFloating $ W.RationalRect (1/6) (1/6) (2/3) (2/3))
     -- NS "htop" "urxvt -name htop -e htop" (title =? "htop") (customFloating $ W.RationalRect (1/4) (1/6) (1/2) (2/3))
@@ -117,6 +116,9 @@ myScratchpads = [
 
     spawnCalculator = "gnome-calculator"
     findCalculator = title =? "Calculator"
+
+    spawnSpotify = "spotify"
+    findSpotify = appName =? "spotify"
 
     rightPanel w = customFloating $ W.RationalRect l t w h
       where
@@ -221,10 +223,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = fromList $
   , ((modm                , xK_n          ), namedScratchpadAction myScratchpads "nautilus")
   , ((modm                , xK_o          ), namedScratchpadAction myScratchpads "htop")
   , ((modm                , xK_c          ), namedScratchpadAction myScratchpads "calculator")
+  , ((modm                , xK_s          ), namedScratchpadAction myScratchpads "spotify")
   , ((modm                , xK_p          ), shellPrompt myXPConfig)
   , ((modm                , xK_F2         ), scratchpadSpawnAction conf)
-  -- , ((modm                , xK_F5         ), lowerVolume 2 >> return ())
-  -- , ((modm                , xK_F6         ), raiseVolume 2 >> return ())
   , ((modm                , xK_F10        ), spawn "bin/stop-compton.sh")  -- Stop compton (doesn't get as confused as xcompmgr but sometimes still necessary)
   , ((modm                , xK_F11        ), spawn "bin/restart-compton.sh")  -- Restart compton
   , ((modm                , xK_F12        ), spawn "xscreensaver-command -lock")
@@ -273,6 +274,8 @@ myStartupHook = do
                 spawnOnce "ssh-add ~/.ssh/id_rsa"
                 spawnOnce "ssh-add ~/.ssh/git_rsa"
                 spawnOnce "compton --backend glx"
+                spawnOnce "xrdb -merge ~/.Xresources"
+                spawnOnce "blueman-applet"
 
 myLayoutHook = smartBorders $ avoidStruts $ standardLayouts
   where standardLayouts = tiled ||| simpleTabbed ||| mosaic 2 [3,2]  ||| Mirror tiled ||| Full
